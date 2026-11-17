@@ -24,15 +24,20 @@ Run manually in GenLayer Studio after deploying
 7. Resolve the ICMA ERCC 2026 event from case 4 — expect
    `CONFIRMED`, with `found_date` `2026-12-01` and a matching
    location, and `is_confirmed(0)` returns `true`.
-8. Submit FII10 with the old claim — event name `FII10`, claimed
-   date `2026-10-26`, location `Riyadh`, page
-   `https://fii-institute.org/conference/fii-10th-edition/` — and
-   resolve it. The page's FAQ still carries the old October 2026
-   dates, so the extraction must take the current announced dates.
-   Expect `RESCHEDULED`, with `found_date` `2027-10-25`. If the
-   extraction is unstable on this page, the fallback case is the
-   press release at
-   `https://fii-institute.org/press/fii-institute-announces-new-dates-for-fii10-october-25-28-2027/`.
+8. Submit the NICE K12 Cybersecurity Education Conference with the
+   old claim — event name
+   `NICE K12 Cybersecurity Education Conference`, claimed date
+   `2026-12-07`, location `New Orleans`, page
+   `https://www.k12cybersecurityconference.org/faqs` — and resolve
+   it. The conference was rescheduled from December 7–8, 2026 to
+   March 7–9, 2027 at the Royal Sonesta New Orleans. Expect
+   `RESCHEDULED`, with `found_date` `2027-03-07`.
+   Note: the FII10 case was retired from this list — both
+   fii-institute.org pages return HTTP 403 to GenLayer's web
+   fetcher, so no extraction ever runs and the event stays
+   PENDING. That is a property of the FII site, not of the
+   contract: the same RESCHEDULED path is covered by the NICE
+   K12 case above.
 9. Submit the Harvard Asia Center event — event name
    `Global Confucius Symposium and Ritual`, claimed date
    `2026-10-16`, location `Cambridge`, page
