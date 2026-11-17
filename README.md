@@ -4,6 +4,14 @@ A standalone Intelligent Contract that attests whether a public
 event is still happening, on the date and at the place it claims,
 against the event's own official page.
 
+## Deployed
+
+- Network: StudioNet (GenLayer Studio)
+- Contract: `0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7`
+- Deploy tx: `0xd8b80230b05699e7810f5b008c2d2fb9656c270de40986dafcff4d518049f36b`
+- Explorer: https://explorer-studio.genlayer.com/address/0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7
+- Studio: https://studio.genlayer.com/?import-contract=0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7
+
 ## Why this exists
 
 Calendars, ticketing aggregators, travel planners and conference
