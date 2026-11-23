@@ -220,7 +220,7 @@ CANCELLED - the page says the event is cancelled
 NOT_FOUND - the page does not exist, was removed, or shows no such event
 
 FOUND_DATE is the event date as currently announced on the page, in YYYY-MM-DD format. For a multi-day event, use the start date only. Take the current announced dates, not dates mentioned in FAQ, history, or past-edition sections of the page. If the event is cancelled or not found, write NONE.
-FOUND_LOCATION is the location as currently announced on the page. If the event is cancelled or not found, write NONE."""
+FOUND_LOCATION is the location as currently announced on the page. Give the venue name and the city, exactly as shown (for example "Le Centorial, Paris"). Do not shorten it to a city or a country alone, and do not add a street address, postcode or country to it. If the page shows only a city, write the city. If the event is cancelled or not found, write NONE."""
             return gl.nondet.exec_prompt(prompt).strip()
 
         line = gl.eq_principle.strict_eq(extract_event)

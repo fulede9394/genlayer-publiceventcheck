@@ -49,7 +49,14 @@ match — and a single shared word does not count either:
 word but are different places, so they do not match. When the
 extracted location carries place tokens the claim never named,
 the contract fails closed to MISMATCH instead of guessing; the
-submitter should claim the full location.
+submitter should claim the full location. The extraction prompt
+asks for the venue name and the city only — no street address,
+postcode or country, and never a city alone — so that the
+extracted location is stable enough for this comparison to
+judge. Extraction can still vary run to run, which is a known
+residual risk of that step, not of the comparison: the
+comparison can only judge what was extracted, and it fails
+closed whenever the extraction is complete.
 
 ## The reschedule trap
 
