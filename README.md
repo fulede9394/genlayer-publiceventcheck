@@ -34,6 +34,23 @@ visible audit trail.
    the claimed date exactly, and the location found on the page
    matches the claimed location.
 
+## Location comparison
+
+Confirmation requires a present, non-empty extracted location:
+a CONFIRMED verdict is never attested on a missing location.
+The two locations are normalized first (lowercase, punctuation
+removed, generic venue and function words such as "hotel",
+"centre" or "hall" dropped) and then compared as whole-token
+sets: the token counts must agree, and every significant token
+of one side must appear as a whole token of the other. Substring
+overlap does not count — "York" inside "New York" is not a
+match — and a single shared word does not count either:
+"Cambridge, Massachusetts" and "Cambridge, England" share a
+word but are different places, so they do not match. When the
+extracted location carries place tokens the claim never named,
+the contract fails closed to MISMATCH instead of guessing; the
+submitter should claim the full location.
+
 ## The reschedule trap
 
 When a page has been rescheduled, its FAQ and history sections
@@ -79,6 +96,6 @@ single opaque verdict.
 
 ## Tests
 
-See `tests/test_cases.md` (10 cases): input validation, unknown /
+See `tests/test_cases.md` (12 cases): input validation, unknown /
 double resolution, the date and location gates, and all five
 terminal states.

@@ -47,3 +47,16 @@ Run manually in GenLayer Studio after deploying
     rejection ("event already resolved"). A CONFIRMED event that
     is later rescheduled stays CONFIRMED in its own record;
     submit a new event for a fresh check.
+11. Submit the ICMA ERCC 2026 event again, same date and page as
+    case 4, but with a wrong claimed location — `Le Centorial,
+    London` — and resolve it. The page still says CONFIRMED with
+    location "Le Centorial, Paris", but the normalized token
+    sets differ ("london" vs "paris"), so expect `MISMATCH`.
+    A shared venue name alone must not confirm a different
+    city.
+12. Submit the ICMA ERCC 2026 event again, same date and page,
+    but with an underspecified claimed location — `Paris` — and
+    resolve it. The extracted location carries place tokens
+    ("le", "centorial") the claim never named, so the
+    comparison fails closed: expect `MISMATCH`. The claim
+    should name the full location.

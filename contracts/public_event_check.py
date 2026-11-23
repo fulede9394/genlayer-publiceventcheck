@@ -43,6 +43,22 @@ class PublicEventCheck(gl.Contract):
     still happening on a different date, and in MISMATCH when
     the extraction does not line up with the claim at all.
 
+    The location comparison is deliberately fail-closed. The
+    extracted location must be present and non-empty: a CONFIRMED
+    verdict is never attested on a missing location. The two
+    locations are normalized (lowercase, punctuation removed,
+    generic venue and function words dropped) and then compared
+    as whole-token sets: every significant token of one must
+    appear as a whole token of the other, and the token counts
+    must agree. Substring overlap does not count ("York" inside
+    "New York" is not a match), and a single shared word does
+    not count ("Cambridge, Massachusetts" and "Cambridge,
+    England" share a word but are different places, so they do
+    not match). When the extracted location carries place tokens
+    the claim never named, the contract refuses to confirm
+    rather than guessing: the submitter should claim the full
+    location.
+
     Two details of the extraction prompt matter. First, when a
     page has been rescheduled, its FAQ and history sections often
     still carry the old dates, so the prompt says to take the
@@ -82,20 +98,61 @@ class PublicEventCheck(gl.Contract):
                 return False
         return True
 
+    def _normalized_location(self, location: str) -> str:
+        # Normalize a location for comparison: lowercase, all
+        # punctuation becomes a space, generic venue and function
+        # words are dropped, and the remaining significant tokens
+        # are joined with single spaces. "Le Centorial, Paris"
+        # becomes "le centorial paris"; "The Royal Sonesta Hotel"
+        # becomes "royal sonesta".
+        lowered = location.lower()
+        cleaned = ""
+        for ch in lowered:
+            if ("a" <= ch <= "z") or ("0" <= ch <= "9") or ch == " ":
+                cleaned = cleaned + ch
+            else:
+                cleaned = cleaned + " "
+        out = ""
+        for word in cleaned.split(" "):
+            if word == "" or len(word) < 2:
+                continue
+            if word == "the" or word == "and" or word == "of" or word == "at" or word == "in" or word == "on" or word == "for" or word == "no":
+                continue
+            if word == "hotel" or word == "centre" or word == "center" or word == "hall" or word == "theatre" or word == "theater" or word == "arena" or word == "stadium" or word == "campus" or word == "building" or word == "convention" or word == "exhibition" or word == "resort" or word == "lodge" or word == "inn" or word == "suite" or word == "suites" or word == "room" or word == "floor" or word == "street" or word == "road" or word == "avenue" or word == "ave" or word == "st" or word == "rd" or word == "blvd" or word == "drive" or word == "dr" or word == "lane" or word == "ln" or word == "court" or word == "ct" or word == "plaza" or word == "square" or word == "sq":
+                continue
+            out = out + word + " "
+        return out.strip()
+
     def _location_matches(self, claimed: str, found: str) -> bool:
-        # A location matches when one side contains the other, or
-        # when they share a significant word (four letters or
-        # more). "Le Centorial, Paris" and "Paris, Le Centorial"
-        # are the same place, in either order.
-        claimed_lower = claimed.lower()
-        found_lower = found.lower()
-        if claimed_lower in found_lower or found_lower in claimed_lower:
+        # Robust normalized comparison. The extracted location
+        # must be present and non-empty. Both sides are compared
+        # as whole-token sets: same token count, and every token
+        # of the claimed location must appear as a whole token of
+        # the found location. Substring overlap ("York" in "New
+        # York") and a single shared word ("Cambridge" in
+        # "Cambridge, Massachusetts" vs "Cambridge, England")
+        # never match. Extra place tokens on either side mean the
+        # two are not the same place, so the comparison fails
+        # closed instead of guessing.
+        if found.strip() == "" or found.strip().upper() == "NONE":
+            return False
+        if claimed.strip() == "":
+            return False
+        c = self._normalized_location(claimed)
+        f = self._normalized_location(found)
+        if c == "" or f == "":
+            return False
+        if c == f:
             return True
-        words = claimed_lower.split(" ")
-        for word in words:
-            if len(word) >= 4 and word in found_lower:
-                return True
-        return False
+        c_words = c.split(" ")
+        f_words = f.split(" ")
+        if len(c_words) != len(f_words):
+            return False
+        f_padded = " " + f + " "
+        for word in c_words:
+            if (" " + word + " ") not in f_padded:
+                return False
+        return True
 
     @gl.public.write
     def submit_event(
@@ -198,7 +255,12 @@ FOUND_LOCATION is the location as currently announced on the page. If the event 
             else:
                 final = self.MISMATCH
         elif status_word == "CONFIRMED":
-            if found_date == claimed_date and self._location_matches(claimed_location, found_location):
+            # Confirmation requires a present, non-empty extracted
+            # location as well as an exact date and a robust
+            # normalized location match. A missing location can
+            # never confirm.
+            location_present = found_location != "" and found_location.upper() != "NONE"
+            if found_date == claimed_date and location_present and self._location_matches(claimed_location, found_location):
                 final = self.CONFIRMED
             else:
                 final = self.MISMATCH
