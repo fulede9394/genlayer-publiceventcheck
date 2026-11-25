@@ -7,10 +7,19 @@ against the event's own official page.
 ## Deployed
 
 - Network: StudioNet (GenLayer Studio)
-- Contract: `0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7`
-- Deploy tx: `0xd8b80230b05699e7810f5b008c2d2fb9656c270de40986dafcff4d518049f36b`
-- Explorer: https://explorer-studio.genlayer.com/address/0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7
-- Studio: https://studio.genlayer.com/?import-contract=0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7
+- Contract: `0x6b4BdEBBD40Ff35B5191e114fbd414FDb858f368`
+- Deploy tx: `0xe0b755c5153664099564060c2e579fbc006a81ecda1cbb9be101a587933087c4`
+- Explorer: https://explorer-studio.genlayer.com/address/0x6b4BdEBBD40Ff35B5191e114fbd414FDb858f368
+- Studio: https://studio.genlayer.com/?import-contract=0x6b4BdEBBD40Ff35B5191e114fbd414FDb858f368
+
+This is the corrected redeployment made for the steward's
+information request of 2026-11-20 (submission bdacabd4…,
+reply by 2026-12-04). The original deployment
+`0xD5ff5313f0DdCc216631ffE5be66Bd3538a64dE7` is superseded by
+this address; an intermediate corrected deployment
+`0xae16d0db1b0677b35741d768B14Cc912c020b232` was superseded in
+turn when the extraction prompt was hardened. The corrected
+source and this address match: same repository, same file.
 
 ## Why this exists
 
